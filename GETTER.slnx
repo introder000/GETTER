@@ -5,5 +5,7 @@
     <Project Path="src/GETTER.Domain/GETTER.Domain.csproj" Id="c6ac96a4-c639-45f0-a7eb-0160c7ac6e43" />
     <Project Path="src/GETTER.Infrastructure/GETTER.Infrastructure.csproj" Id="f17f9481-3d0e-443f-9f15-06a5435c567f" />
   </Folder>
-  <Folder Name="/tests/" />
+  <Folder Name="/tests/">
+    <Project Path="tests/GETTER.Domain.Tests/GETTER.Domain.Tests.csproj" Id="45382959-7f52-41d1-955d-3b45b0ccf0c0" />
+  </Folder>
 </Solution>
