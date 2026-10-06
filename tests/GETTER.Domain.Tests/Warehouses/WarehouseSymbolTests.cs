@@ -17,9 +17,9 @@ namespace GETTER.Domain.Tests.Warehouses
         ];
         [Theory]
         [MemberData(nameof(InvalidSymbol))]
-        public void Create_WithInvalidSymbol_ShouldThrowDomainException(string symbol, Error expected)
+        public void Create_WithInvalidSymbol_ShouldThrowDomainException(string input, Error expected)
         {
-            WarehouseSymbol act() => WarehouseSymbol.Create(symbol);
+            WarehouseSymbol act() => WarehouseSymbol.Create(input);
 
             var ex = Assert.Throws<DomainException>(act);
             Assert.Equal(expected.Code, ex.Error.Code);
@@ -33,9 +33,9 @@ namespace GETTER.Domain.Tests.Warehouses
         [InlineData("  wro-01  ", "WRO-01")]
         public void Create_WithValidSymbol_ShouldNormalizeSymbol(string input, string expected)
         {
-            var warehouse = Warehouse.Create("Testowy", input, WarehouseType.Physical, isActive: true);
+            var symbol = WarehouseSymbol.Create(input);
 
-            Assert.Equal(expected, warehouse.Symbol.Value);
+            Assert.Equal(expected, symbol.Value);
         }
     }
 }
