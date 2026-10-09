@@ -31,5 +31,6 @@ namespace GETTER.Domain.Warehouses
         //Warehouse address
         public static readonly Error WarehouseAddressLength =
         new("Warehouse.Address.Length", "Warehouse address cannot exceed 200 characters.");
+
     }
 }

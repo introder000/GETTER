@@ -12,56 +12,62 @@ public sealed class Warehouse
     public bool IsActive { get; private set; }
     public WarehouseType Type { get; private set; }
 
-    private Warehouse() { }
-
-    public static Warehouse Create(string name, string symbol, WarehouseType type, bool isActive, string? description = null, string? address = null)
+    private Warehouse(Guid id, string name, WarehouseSymbol symbol, WarehouseType type, bool isActive, string? description, string? address)
     {
-        var warehouse = new Warehouse
-        {
-            Id = Guid.NewGuid(),
-            Symbol = WarehouseSymbol.Create(symbol),
-            Type = type,
-            IsActive = isActive
-        };
-        warehouse.UpdateDetails(description, address);
-        warehouse.Rename(name);
-        return warehouse;
+        Id = id;
+        Name = name;
+        Symbol = symbol;
+        Type = type;
+        IsActive = isActive;
+        Description = description;
+        Address = address;
+    }
+
+    public static Warehouse Create(string name, WarehouseSymbol symbol, WarehouseType type, bool isActive, string? description = null, string? address = null)
+    {
+        ArgumentNullException.ThrowIfNull(symbol);
+
+        description = StringNormalizer.Normalize(description);
+        address = StringNormalizer.Normalize(address);
+
+        return new Warehouse(
+            Guid.NewGuid(),
+            ValidateName(StringNormalizer.Normalize(name)),
+            symbol,
+            type,
+            isActive,
+            (description is null) ? null : ValidateDescription(description),
+            (address is null) ? null : ValidateAddress(address)
+            );
     }
 
     public void Activate() => IsActive = true;
     public void Deactivate() => IsActive = false;
 
-    public void UpdateDetails(string? description, string? address)
+    private static string ValidateDescription(string description)
     {
-        description = string.IsNullOrWhiteSpace(description) ? null : description.Trim();
-        address = string.IsNullOrWhiteSpace(address) ? null : address.Trim();
-
-        if (description?.Length > 200)
+        if (description.Length > 200)
             throw new DomainException(WarehouseErrors.WarehouseDescriptionLength);
 
-        if (address?.Length > 200)
-            throw new DomainException(WarehouseErrors.WarehouseAddressLength);
-
-        Description = description;
-        Address = address;
+        return description;
     }
 
-    public void Rename(string name)
+    private static string ValidateAddress(string address)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if (address.Length > 200)
+            throw new DomainException(WarehouseErrors.WarehouseAddressLength);
+
+        return address;
+    }
+
+    private static string ValidateName(string? name)
+    {
+        if (name is null || name.Length is < 3 or > 50)
             throw new DomainException(WarehouseErrors.WarehouseNameLength);
-
-        name = name.Trim();
-
-        if (name.Length is < 3 or > 50)
-            throw new DomainException(WarehouseErrors.WarehouseNameLength);
-
-        if (name.Contains("  "))
-            throw new DomainException(WarehouseErrors.WarehouseNameDoubleSpaces);
 
         if (!name.All(c => char.IsLetterOrDigit(c) || c is ' ' or '-' or '_'))
             throw new DomainException(WarehouseErrors.WarehouseNameInvalidCharacters);
 
-        Name = name;
+        return name;
     }
 }

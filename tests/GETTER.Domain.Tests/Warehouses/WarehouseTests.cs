@@ -5,15 +5,17 @@ namespace GETTER.Domain.Tests.Warehouses;
 
 public class WarehouseTests
 {
+    private static readonly WarehouseSymbol ValidSymbol = WarehouseSymbol.Create("TEST");
+
     public static IEnumerable<object[]> InvalidNames =>
     [
         ["ww", WarehouseErrors.WarehouseNameLength],
         [new string('A', 51), WarehouseErrors.WarehouseNameLength],
-        ["Magazyn  Główny", WarehouseErrors.WarehouseNameDoubleSpaces],
         ["Magazyn@", WarehouseErrors.WarehouseNameInvalidCharacters],
         ["   ", WarehouseErrors.WarehouseNameLength],
         ["", WarehouseErrors.WarehouseNameLength],
-        [" ", WarehouseErrors.WarehouseNameLength]
+        [" ", WarehouseErrors.WarehouseNameLength],
+        ["😀", WarehouseErrors.WarehouseNameLength]
     ];
 
     public static IEnumerable<object[]> InvalidDescription =>
@@ -30,18 +32,36 @@ public class WarehouseTests
     [MemberData(nameof(InvalidNames))]
     public void Create_WithInvalidName_ShouldThrowExpectedError(string name, Error expected)
     {
-        Warehouse act() => Warehouse.Create(name, "TEST", WarehouseType.Physical, isActive: true);
+        Warehouse act() => Warehouse.Create(name, ValidSymbol, WarehouseType.Physical, isActive: true);
 
         var ex = Assert.Throws<DomainException>(act);
         Assert.Equal(expected.Code, ex.Error.Code);
     }
 
+    [Theory]
+    [InlineData("  Magazyn Główny  ", "Magazyn Główny")]
+    [InlineData("Magazyn   Główny", "Magazyn Główny")]
+    [InlineData("Magazyn 😀 Główny", "Magazyn Główny")]
+    public void Create_WithName_ShouldNormalizeName(string input, string expected)
+    {
+        var warehouse = Warehouse.Create(input, ValidSymbol, WarehouseType.Physical, isActive: true);
+
+        Assert.Equal(expected, warehouse.Name);
+    }
+
+    [Fact]
+    public void Create_WithNullSymbol_ShouldThrowArgumentNullException()
+    {
+        Warehouse act() => Warehouse.Create("Magazyn", null!, WarehouseType.Physical, isActive: true);
+
+        Assert.Throws<ArgumentNullException>(act);
+    }
 
     [Fact]
     public void Create_WithValidData_ShouldCreateWarehouse()
     {
         var name = "  Magazyn Główny  ";
-        var symbol = "wro-01";
+        var symbol = WarehouseSymbol.Create("wro-01");
 
         var warehouse = Warehouse.Create(name, symbol, WarehouseType.Physical, isActive: true);
 
@@ -54,7 +74,7 @@ public class WarehouseTests
     [MemberData(nameof(InvalidDescription))]
     public void Create_WithInvalidDescription_ShouldThrowExpectedError(string description, Error expected)
     {
-        Warehouse act() => Warehouse.Create("TEST", "TEST", WarehouseType.Physical, isActive: true, description: description);
+        Warehouse act() => Warehouse.Create("TEST", ValidSymbol, WarehouseType.Physical, isActive: true, description: description);
 
         var ex = Assert.Throws<DomainException>(act);
         Assert.Equal(expected.Code, ex.Error.Code);
@@ -66,7 +86,7 @@ public class WarehouseTests
     [InlineData(null, null)]
     public void Create_WithDescription_ShouldNormalizeDescription(string? input, string? expected)
     {
-        var warehouse = Warehouse.Create("TEST", "TEST", WarehouseType.Physical, isActive: true, description: input);
+        var warehouse = Warehouse.Create("TEST", ValidSymbol, WarehouseType.Physical, isActive: true, description: input);
 
         Assert.Equal(expected, warehouse.Description);
     }
@@ -78,7 +98,7 @@ public class WarehouseTests
     [InlineData(null, null)]
     public void Create_WithAddress_ShouldNormalizeAddress(string? input, string? expected)
     {
-        var warehouse = Warehouse.Create("TEST", "TEST", WarehouseType.Physical, isActive: true, address: input);
+        var warehouse = Warehouse.Create("TEST", ValidSymbol, WarehouseType.Physical, isActive: true, address: input);
         Assert.Equal(expected, warehouse.Address);
     }
 
@@ -86,7 +106,7 @@ public class WarehouseTests
     [MemberData(nameof(InvalidAddress))]
     public void Create_WithInvalidAddress_ShouldThrowExpectedError(string address, Error expected)
     {
-        Warehouse act() => Warehouse.Create("TEST", "TEST", WarehouseType.Physical, isActive: true, address: address);
+        Warehouse act() => Warehouse.Create("TEST", ValidSymbol, WarehouseType.Physical, isActive: true, address: address);
 
         var ex = Assert.Throws<DomainException>(act);
         Assert.Equal(expected.Code, ex.Error.Code);
@@ -95,7 +115,7 @@ public class WarehouseTests
     [Fact]
     public void Activate_ShouldSetIsActiveToTrue()
     {
-        var warehouse = Warehouse.Create("TEST", "TEST", WarehouseType.Physical, isActive: false);
+        var warehouse = Warehouse.Create("TEST", ValidSymbol, WarehouseType.Physical, isActive: false);
         Assert.False(warehouse.IsActive);
 
         warehouse.Activate();
@@ -105,7 +125,7 @@ public class WarehouseTests
     [Fact]
     public void Deactivate_ShouldSetIsActiveToFalse()
     {
-        var warehouse = Warehouse.Create("TEST", "TEST", WarehouseType.Physical, isActive: true);
+        var warehouse = Warehouse.Create("TEST", ValidSymbol, WarehouseType.Physical, isActive: true);
         Assert.True(warehouse.IsActive);
 
         warehouse.Deactivate();
