@@ -5,24 +5,25 @@ namespace GETTER.Domain.Tests.Warehouses
 {
     public class WarehouseSymbolTests
     {
-        public static IEnumerable<object[]> InvalidSymbol =>
-        [
-            ["w", WarehouseErrors.WarehouseSymbolLength],
-            ["ABCDEFGHIJK", WarehouseErrors.WarehouseSymbolLength],   // 11 znaków
-            ["WRÓ-01", WarehouseErrors.WarehouseSymbolInvalidCharacters],       // polska litera
-            ["WRO 01", WarehouseErrors.WarehouseSymbolInvalidCharacters],        // spacja
-            ["", WarehouseErrors.WarehouseSymbolLength],
-            [" ", WarehouseErrors.WarehouseSymbolLength],
-            ["  ", WarehouseErrors.WarehouseSymbolLength]
-        ];
+        public static TheoryData<string, string> InvalidSymbol => new()
+        {
+            { "w", WarehouseErrors.WarehouseSymbolLength.Code },
+            { "ABCDEFGHIJK", WarehouseErrors.WarehouseSymbolLength.Code },
+            { "WRÓ-01", WarehouseErrors.WarehouseSymbolInvalidCharacters.Code },
+            { "WRO 01", WarehouseErrors.WarehouseSymbolInvalidCharacters.Code },
+            { "", WarehouseErrors.WarehouseSymbolLength.Code },
+            { " ", WarehouseErrors.WarehouseSymbolLength.Code },
+            { "  ", WarehouseErrors.WarehouseSymbolLength.Code }
+        };
+
         [Theory]
         [MemberData(nameof(InvalidSymbol))]
-        public void Create_WithInvalidSymbol_ShouldThrowDomainException(string input, Error expected)
+        public void Create_WithInvalidSymbol_ShouldThrowDomainException(string input, string expected)
         {
             WarehouseSymbol act() => WarehouseSymbol.Create(input);
 
             var ex = Assert.Throws<DomainException>(act);
-            Assert.Equal(expected.Code, ex.Error.Code);
+            Assert.Equal(expected, ex.Error.Code);
         }
 
         [Theory]

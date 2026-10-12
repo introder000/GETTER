@@ -22,7 +22,7 @@ public sealed record Nip
         if (number.Length is < 3 or > 30)
             throw new DomainException(ValueObjectsErrors.NipLength);
 
-        if (number.Any(c => !char.IsLetterOrDigit(c) && c != '-' && c != ' '))
+        if (number.Any(c => !char.IsAsciiLetterOrDigit(c) && c != '-' && c != ' '))
             throw new DomainException(ValueObjectsErrors.NipInvalidCharacters);
 
         return new Nip(number, prefix);

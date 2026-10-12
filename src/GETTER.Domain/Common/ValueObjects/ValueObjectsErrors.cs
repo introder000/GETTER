@@ -11,7 +11,7 @@
 
         // EMAIL
         public static readonly Error EmailLength =
-            new("Email.Length", "Email must be between 8 and 255 characters long.");
+            new("Email.Length", "Email must be between 5 and 255 characters long.");
 
         public static readonly Error EmailInvalidCharacters =
             new("Email.InvalidCharacters", "Email contains invalid characters.");

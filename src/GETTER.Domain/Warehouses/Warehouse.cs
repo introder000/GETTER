@@ -27,47 +27,55 @@ public sealed class Warehouse
     {
         ArgumentNullException.ThrowIfNull(symbol);
 
-        description = StringNormalizer.Normalize(description);
-        address = StringNormalizer.Normalize(address);
-
         return new Warehouse(
             Guid.NewGuid(),
-            ValidateName(StringNormalizer.Normalize(name)),
+            ValidateName(name),
             symbol,
             type,
             isActive,
-            (description is null) ? null : ValidateDescription(description),
-            (address is null) ? null : ValidateAddress(address)
+            ValidateDescription(description),
+            ValidateAddress(address)
             );
     }
 
     public void Activate() => IsActive = true;
     public void Deactivate() => IsActive = false;
 
-    private static string ValidateDescription(string description)
-    {
-        if (description.Length > 200)
-            throw new DomainException(WarehouseErrors.WarehouseDescriptionLength);
-
-        return description;
-    }
-
-    private static string ValidateAddress(string address)
-    {
-        if (address.Length > 200)
-            throw new DomainException(WarehouseErrors.WarehouseAddressLength);
-
-        return address;
-    }
-
     private static string ValidateName(string? name)
     {
-        if (name is null || name.Length is < 3 or > 50)
+        name = StringNormalizer.Normalize(name) ?? throw new DomainException(WarehouseErrors.WarehouseNameLength);
+
+        if (name.Length is < 3 or > 50)
             throw new DomainException(WarehouseErrors.WarehouseNameLength);
 
         if (!name.All(c => char.IsLetterOrDigit(c) || c is ' ' or '-' or '_'))
             throw new DomainException(WarehouseErrors.WarehouseNameInvalidCharacters);
 
         return name;
+    }
+    private static string? ValidateDescription(string? description)
+    {
+        description = StringNormalizer.Normalize(description);
+
+        if (description is null)
+            return null;
+
+        if (description.Length > 200)
+            throw new DomainException(WarehouseErrors.WarehouseDescriptionLength);
+
+        return description;
+    }
+
+    private static string? ValidateAddress(string? address)
+    {
+        address = StringNormalizer.Normalize(address);
+
+        if (address is null)
+            return null;
+
+        if (address.Length > 200)
+            throw new DomainException(WarehouseErrors.WarehouseAddressLength);
+
+        return address;
     }
 }

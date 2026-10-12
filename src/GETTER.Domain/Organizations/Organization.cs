@@ -33,14 +33,13 @@ public sealed class Organization
     public static Organization Create(string name, Phone phone, Email email, Address address,
     Nip? nip = null, Regon? regon = null, Krs? krs = null, Bdo? bdo = null, Eori? eori = null)
     {
-
         ArgumentNullException.ThrowIfNull(phone);
         ArgumentNullException.ThrowIfNull(email);
         ArgumentNullException.ThrowIfNull(address);
 
         return new Organization(
             Guid.NewGuid(),
-            ValidateName(StringNormalizer.Normalize(name)),
+            ValidateName(name),
             phone,
             email,
             address,
@@ -52,10 +51,11 @@ public sealed class Organization
     }
     private static string ValidateName(string? name)
     {
-        if (name is null || name.Length is < 3 or > 255)
+        name = StringNormalizer.Normalize(name) ?? throw new DomainException(OrganizationErrors.InvalidName);
+
+        if (name.Length is < 3 or > 255)
             throw new DomainException(OrganizationErrors.InvalidName);
+
         return name;
     }
 }
-
-

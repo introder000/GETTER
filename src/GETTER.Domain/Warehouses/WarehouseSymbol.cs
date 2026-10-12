@@ -12,10 +12,8 @@ public sealed record WarehouseSymbol
     }
     public static WarehouseSymbol Create(string symbol)
     {
-        if (string.IsNullOrWhiteSpace(symbol))
-            throw new DomainException(WarehouseErrors.WarehouseSymbolLength);
-
-        symbol = symbol.Trim();
+        symbol = StringNormalizer.Normalize(symbol) ?? throw new DomainException(WarehouseErrors.WarehouseSymbolLength);
+        symbol = symbol.ToUpperInvariant();
 
         if (symbol.Length is < 2 or > 10)
             throw new DomainException(WarehouseErrors.WarehouseSymbolLength);
@@ -23,6 +21,6 @@ public sealed record WarehouseSymbol
         if (!symbol.All(c => char.IsAsciiLetterOrDigit(c) || c == '-'))
             throw new DomainException(WarehouseErrors.WarehouseSymbolInvalidCharacters);
 
-        return new WarehouseSymbol(symbol.ToUpperInvariant());
+        return new WarehouseSymbol(symbol);
     }
 }

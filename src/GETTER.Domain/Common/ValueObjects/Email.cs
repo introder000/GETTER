@@ -1,4 +1,6 @@
-﻿namespace GETTER.Domain.Common.ValueObjects;
+﻿using System.Net.Mail;
+
+namespace GETTER.Domain.Common.ValueObjects;
 
 public sealed record Email
 {
@@ -8,22 +10,20 @@ public sealed record Email
     {
         Value = value;
     }
-    public static Email Create(string value)
+
+    public static Email Create(string? value)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        value = value?.Trim().ToLowerInvariant();
+
+        if (string.IsNullOrEmpty(value) || value.Length is < 5 or > 255)
             throw new DomainException(ValueObjectsErrors.EmailLength);
 
-        value = value.Trim();
-
-        if (value.Length is < 8 or > 255)
-            throw new DomainException(ValueObjectsErrors.EmailLength);
-
-        if (!value.Contains('@') || !value[(value.IndexOf('@') + 1)..].Contains('.'))
+        if (!value.All(char.IsAscii)
+            || !MailAddress.TryCreate(value, out var parsed)
+            || parsed.Address != value
+            || !parsed.Host.Contains('.'))
             throw new DomainException(ValueObjectsErrors.EmailInvalidCharacters);
 
-        return new Email(value.ToLowerInvariant());
+        return new Email(value);
     }
-
-
 }
-

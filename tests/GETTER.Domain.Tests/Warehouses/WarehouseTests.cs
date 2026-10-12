@@ -7,35 +7,34 @@ public class WarehouseTests
 {
     private static readonly WarehouseSymbol ValidSymbol = WarehouseSymbol.Create("TEST");
 
-    public static IEnumerable<object[]> InvalidNames =>
-    [
-        ["ww", WarehouseErrors.WarehouseNameLength],
-        [new string('A', 51), WarehouseErrors.WarehouseNameLength],
-        ["Magazyn@", WarehouseErrors.WarehouseNameInvalidCharacters],
-        ["   ", WarehouseErrors.WarehouseNameLength],
-        ["", WarehouseErrors.WarehouseNameLength],
-        [" ", WarehouseErrors.WarehouseNameLength],
-        ["😀", WarehouseErrors.WarehouseNameLength]
-    ];
-
-    public static IEnumerable<object[]> InvalidDescription =>
-    [
-        [new string('A', 201), WarehouseErrors.WarehouseDescriptionLength],
-    ];
-    public static IEnumerable<object[]> InvalidAddress =>
-    [
-        [new string('A', 201), WarehouseErrors.WarehouseAddressLength],
-    ];
+    public static TheoryData<string, string> InvalidNames => new()
+    {
+        { "ww", WarehouseErrors.WarehouseNameLength.Code },
+        { new string('A', 51), WarehouseErrors.WarehouseNameLength.Code },
+        { "Magazyn@", WarehouseErrors.WarehouseNameInvalidCharacters.Code },
+        { "   ", WarehouseErrors.WarehouseNameLength.Code },
+        { "", WarehouseErrors.WarehouseNameLength.Code },
+        { " ", WarehouseErrors.WarehouseNameLength.Code },
+        { "😀", WarehouseErrors.WarehouseNameLength.Code }
+    };
+    public static TheoryData<string, string> InvalidDescription => new()
+    {
+        { new string('A', 201), WarehouseErrors.WarehouseDescriptionLength.Code }
+    };
+    public static TheoryData<string, string> InvalidAddress => new()
+    {
+        { new string('A', 201), WarehouseErrors.WarehouseAddressLength.Code }
+    };
 
 
     [Theory]
     [MemberData(nameof(InvalidNames))]
-    public void Create_WithInvalidName_ShouldThrowExpectedError(string name, Error expected)
+    public void Create_WithInvalidName_ShouldThrowExpectedError(string name, string expected)
     {
         Warehouse act() => Warehouse.Create(name, ValidSymbol, WarehouseType.Physical, isActive: true);
 
         var ex = Assert.Throws<DomainException>(act);
-        Assert.Equal(expected.Code, ex.Error.Code);
+        Assert.Equal(expected, ex.Error.Code);
     }
 
     [Theory]
@@ -52,7 +51,7 @@ public class WarehouseTests
     [Fact]
     public void Create_WithNullSymbol_ShouldThrowArgumentNullException()
     {
-        Warehouse act() => Warehouse.Create("Magazyn", null!, WarehouseType.Physical, isActive: true);
+        static Warehouse act() => Warehouse.Create("Magazyn", null!, WarehouseType.Physical, isActive: true);
 
         Assert.Throws<ArgumentNullException>(act);
     }
@@ -72,12 +71,12 @@ public class WarehouseTests
 
     [Theory]
     [MemberData(nameof(InvalidDescription))]
-    public void Create_WithInvalidDescription_ShouldThrowExpectedError(string description, Error expected)
+    public void Create_WithInvalidDescription_ShouldThrowExpectedError(string description, string expected)
     {
         Warehouse act() => Warehouse.Create("TEST", ValidSymbol, WarehouseType.Physical, isActive: true, description: description);
 
         var ex = Assert.Throws<DomainException>(act);
-        Assert.Equal(expected.Code, ex.Error.Code);
+        Assert.Equal(expected, ex.Error.Code);
     }
 
     [Theory]
@@ -104,12 +103,12 @@ public class WarehouseTests
 
     [Theory]
     [MemberData(nameof(InvalidAddress))]
-    public void Create_WithInvalidAddress_ShouldThrowExpectedError(string address, Error expected)
+    public void Create_WithInvalidAddress_ShouldThrowExpectedError(string address, string expected)
     {
         Warehouse act() => Warehouse.Create("TEST", ValidSymbol, WarehouseType.Physical, isActive: true, address: address);
 
         var ex = Assert.Throws<DomainException>(act);
-        Assert.Equal(expected.Code, ex.Error.Code);
+        Assert.Equal(expected, ex.Error.Code);
     }
 
     [Fact]
