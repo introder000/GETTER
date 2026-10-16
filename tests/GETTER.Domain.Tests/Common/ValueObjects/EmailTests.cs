@@ -32,7 +32,7 @@ public class EmailTests
     [Fact]
     public void Create_WithNull_ShouldThrowEmailLength()
     {
-        Email act() => Email.Create(null);
+        static Email act() => Email.Create(null);
 
         var ex = Assert.Throws<DomainException>(act);
         Assert.Equal(ValueObjectsErrors.EmailLength.Code, ex.Error.Code);
