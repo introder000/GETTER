@@ -10,7 +10,7 @@ public sealed record WarehouseSymbol
     {
         Value = value;
     }
-    public static WarehouseSymbol Create(string symbol)
+    public static WarehouseSymbol Create(string? symbol)
     {
         symbol = StringNormalizer.Normalize(symbol) ?? throw new DomainException(WarehouseErrors.WarehouseSymbolLength);
         symbol = symbol.ToUpperInvariant();

@@ -23,7 +23,7 @@ public sealed class Warehouse
         Address = address;
     }
 
-    public static Warehouse Create(string name, WarehouseSymbol symbol, WarehouseType type, bool isActive, string? description = null, string? address = null)
+    public static Warehouse Create(string? name, WarehouseSymbol symbol, WarehouseType type, bool isActive, string? description = null, string? address = null)
     {
         ArgumentNullException.ThrowIfNull(symbol);
 
