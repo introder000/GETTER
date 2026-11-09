@@ -18,6 +18,9 @@ namespace GETTER.Domain.Warehouses
         public static readonly Error WarehouseSymbolInvalidCharacters =
         new("Warehouse.Symbol.InvalidCharacters", "Warehouse symbol can only contain letters, digits, and hyphens.");
 
+        public static readonly Error WarehouseSymbolAlreadyExists =
+        new("Warehouse.Symbol.AlreadyExists", "Warehouse symbol is already in use.");
+
         //Warehouse description
         public static readonly Error WarehouseDescriptionLength =
         new("Warehouse.Description.Length", "Warehouse description cannot exceed 200 characters.");
