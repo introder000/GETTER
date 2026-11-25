@@ -1,0 +1,60 @@
+﻿@page "/"
+
+<PageTitle>Magazyny – GETTER</PageTitle>
+
+<div class="page-head">
+    <h1>Magazyny</h1>
+    <button type="button" class="btn-primary">Dodaj magazyn</button>
+</div>
+
+@if (_warehouses.Count == 0)
+{
+    <p class="empty">Brak magazynów. Dodaj pierwszy magazyn.</p>
+}
+else
+{
+    <div class="table-card">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Symbol</th>
+                    <th>Typ</th>
+                    <th>Adres</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var w in _warehouses)
+                {
+                    <tr @key="w.Id">
+                        <td>
+                            <span class="name">@w.Name</span>
+                            @if (w.Description is not null)
+                            {
+                                <span class="desc">@w.Description</span>
+                            }
+                        </td>
+                        <td><span class="symbol">@w.Symbol</span></td>
+                        <td>@w.Type</td>
+                        <td>@(w.Address ?? "—")</td>
+                        <td><span class="status @(w.IsActive ? "active" : "inactive")">@(w.IsActive ? "Aktywny" : "Nieaktywny")</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    // Dane przykładowe, do podmiany na dane z API (GET /api/warehouses - do zrobienia po stronie API).
+    private sealed record WarehouseRow(Guid Id, string Name, string Symbol, string Type, string? Address, string? Description, bool IsActive);
+
+    private readonly List<WarehouseRow> _warehouses = new()
+    {
+        new(Guid.NewGuid(), "Główny", "GL-01", "Fizyczny", "ul. Magazynowa 12, 60-001 Poznań", "Magazyn centralny, wysyłki B2C", true),
+        new(Guid.NewGuid(), "Zwroty", "ZW-01", "Fizyczny", "ul. Magazynowa 12, 60-001 Poznań", "Obsługa zwrotów i reklamacji", true),
+        new(Guid.NewGuid(), "Poznań", "PO-01", "Fizyczny", "ul. Składowa 5, 61-001 Poznań", null, true),
+        new(Guid.NewGuid(), "Dropshipping", "DS-01", "Wirtualny", null, "Stany dostawcy zewnętrznego", false),
+    };
+}

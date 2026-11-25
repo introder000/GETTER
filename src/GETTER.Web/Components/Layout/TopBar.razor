@@ -1,0 +1,97 @@
+﻿<header class="topbar">
+    @* Górny pasek: Po lewej Nowe i aktywny magazyn, wyszukiwarka na środku, pomoc i powiadomienia po prawej. Dane przykładowe, do podpięcia później. *@
+    <div class="topleft" @onkeydown="OnMenuKeyDown">
+        @if (_menu is not null)
+        {
+            <button type="button" class="menu-backdrop" tabindex="-1" aria-hidden="true" @onclick="CloseMenu"></button>
+        }
+        <div class="quick">
+            <button type="button" class="quick-btn" @onclick="@(() => ToggleMenu("quick"))" aria-haspopup="menu" aria-expanded="@(_menu == "quick" ? "true" : "false")" title="Szybkie akcje">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                <span>Nowe</span>
+                <svg class="quick-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+            </button>
+            @if (_menu == "quick")
+            {
+                <div class="quick-menu" role="menu" aria-label="Szybkie akcje">
+                    <a class="quick-item" role="menuitem" href="produkty/nowy" @onclick="CloseMenu">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.2v9.6L12 21l-8-4.2V7.2z" /><path d="M4 7.2l8 4.3 8-4.3M12 11.5V21" /></svg>
+                        <span>Nowy produkt</span>
+                    </a>
+                    <a class="quick-item" role="menuitem" href="zamowienia/nowe" @onclick="CloseMenu">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l1 12.2a1.5 1.5 0 0 1-1.5 1.6h-13A1.5 1.5 0 0 1 4 20.2z" /><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3M9 15l2.2 2.2 4-4.4" /></svg>
+                        <span>Nowe zamówienie</span>
+                    </a>
+                    <a class="quick-item" role="menuitem" href="dokumenty/nowy" @onclick="CloseMenu">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 2.8h8.5l5 5v12.2a1.5 1.5 0 0 1-1.5 1.5H5.5A1.5 1.5 0 0 1 4 20V4.3a1.5 1.5 0 0 1 1.5-1.5z" /><path d="M14 2.8v4a1.5 1.5 0 0 0 1.5 1.5H19M8 12.5h8M8 15.5h8M8 18.5h5" /></svg>
+                        <span>Nowy dokument</span>
+                    </a>
+                    <a class="quick-item" role="menuitem" href="/" @onclick="CloseMenu">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 9.5L12 4l9.5 5.5v11a1 1 0 0 1-1 1h-17a1 1 0 0 1-1-1z" /><path d="M7 21.5v-9h10v9M7 15.5h10M7 18.5h10" /></svg>
+                        <span>Nowy magazyn</span>
+                    </a>
+                </div>
+            }
+        </div>
+        <div class="wh">
+            <button type="button" class="wh-btn" @onclick="@(() => ToggleMenu("warehouse"))" aria-haspopup="menu" aria-expanded="@(_menu == "warehouse" ? "true" : "false")" title="Zmień magazyn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 9.5L12 4l9.5 5.5v11a1 1 0 0 1-1 1h-17a1 1 0 0 1-1-1z" /><path d="M7 21.5v-9h10v9M7 15.5h10M7 18.5h10" /></svg>
+                <span class="wh-text">
+                    <span class="wh-label">Aktywny magazyn</span>
+                    <span class="wh-name">@_activeWarehouse</span>
+                </span>
+                <span class="wh-change">Zmień</span>
+            </button>
+            @if (_menu == "warehouse")
+            {
+                <div class="quick-menu" role="menu" aria-label="Wybierz magazyn">
+                    @foreach (var w in _warehouses)
+                    {
+                        var isActive = w == _activeWarehouse;
+                        <button type="button" class="quick-item" role="menuitemradio" aria-checked="@(isActive ? "true" : "false")" @onclick="@(() => SelectWarehouse(w))">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 9.5L12 4l9.5 5.5v11a1 1 0 0 1-1 1h-17a1 1 0 0 1-1-1z" /><path d="M7 21.5v-9h10v9M7 15.5h10M7 18.5h10" /></svg>
+                            <span>@w</span>
+                            <svg class="quick-check @(isActive ? "" : "off")" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <div class="topsearch" role="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.3"/><path d="M15.4 15.4L21 21"/></svg>
+        <input type="search" class="topsearch-input" placeholder="Szukaj produktów, zamówień, dokumentów…" aria-label="Szukaj" />
+    </div>
+    <div class="topright">
+        <button type="button" class="topicon" aria-label="Pomoc" title="Pomoc">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#D6D6DC" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.6"/><path d="M12 17.2h.01" stroke-width="2.4"/></svg>
+        </button>
+        <button type="button" class="topicon" aria-label="Powiadomienia, 3 nowe" title="Powiadomienia">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#D6D6DC" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 5.5 2 6.8 2 6.8H4S6 14.5 6 9z"/><path d="M10 19.5a2.2 2.2 0 0 0 4 0"/></svg>
+            <span class="badge" aria-hidden="true">3</span>
+        </button>
+    </div>
+</header>
+
+@code {
+    // Dane przykładowe, do podpięcia pod API magazynów.
+    private readonly string[] _warehouses = { "Główny", "Zwroty", "Poznań" };
+    private string _activeWarehouse = "Główny";
+
+    private string? _menu; // "quick" | "warehouse" | null
+
+    private void ToggleMenu(string name) => _menu = _menu == name ? null : name;
+
+    private void CloseMenu() => _menu = null;
+
+    private void SelectWarehouse(string name)
+    {
+        _activeWarehouse = name;
+        _menu = null;
+    }
+
+    private void OnMenuKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") _menu = null;
+    }
+}

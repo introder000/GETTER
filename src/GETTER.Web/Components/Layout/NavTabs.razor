@@ -1,0 +1,50 @@
+﻿<div class="navtabs" role="tablist" aria-label="Otwarte karty">
+    @foreach (var tab in _tabs)
+    {
+        var isActive = tab.Id == _activeId;
+        <div class="tab @(isActive ? "active" : "")" role="presentation" @key="tab.Id">
+            <button type="button" class="tab-main" role="tab" aria-selected="@(isActive ? "true" : "false")" title="@tab.Title" @onclick="() => Activate(tab.Id)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="@tab.Icon" /></svg>
+                <span class="tab-title">@tab.Title</span>
+            </button>
+            @if (_tabs.Count > 1)
+            {
+                <button type="button" class="tab-close" aria-label="Zamknij kartę @tab.Title" title="Zamknij" @onclick="() => Close(tab.Id)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                </button>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private sealed record TabItem(string Id, string Title, string Icon);
+
+    private const string WarehouseIcon = "M2.5 9.5L12 4l9.5 5.5v11a1 1 0 0 1-1 1h-17a1 1 0 0 1-1-1z M7 21.5v-9h10v9M7 15.5h10M7 18.5h10";
+    private const string ProductIcon = "M12 3l8 4.2v9.6L12 21l-8-4.2V7.2z M4 7.2l8 4.3 8-4.3M12 11.5V21";
+    private const string OrderIcon = "M5 8h14l1 12.2a1.5 1.5 0 0 1-1.5 1.6h-13A1.5 1.5 0 0 1 4 20.2z M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3M9 15l2.2 2.2 4-4.4";
+
+    private readonly List<TabItem> _tabs = new()
+    {
+        new("magazyny", "Magazyny", WarehouseIcon),
+        new("produkty", "Produkty", ProductIcon),
+        new("zamowienie-1042", "Zamówienie #1042", OrderIcon),
+    };
+
+    private string _activeId = "magazyny";
+
+    private void Activate(string id) => _activeId = id;
+
+    private void Close(string id)
+    {
+        var index = _tabs.FindIndex(t => t.Id == id);
+        if (index < 0 || _tabs.Count <= 1) return;
+
+        _tabs.RemoveAt(index);
+
+        if (_activeId == id)
+        {
+            _activeId = _tabs[Math.Max(0, index - 1)].Id;
+        }
+    }
+}

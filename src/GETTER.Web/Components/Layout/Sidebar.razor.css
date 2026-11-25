@@ -1,0 +1,253 @@
+
+/* SIDEBAR */
+/*-----------------------------------------------*/
+.sidebar {
+    flex: none;
+    width: 208px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--bar);
+    overflow: hidden;
+    transition: width 0.18s ease;
+}
+
+.sidebar.collapsed {
+    width: 68px;
+}
+
+.sidebar.collapsed .sidenav-toggle svg {
+    transform: rotate(180deg);
+}
+
+.sidebar.collapsed .sidenav-toggle span,
+.sidebar.collapsed .usertext,
+.sidebar.collapsed ::deep .sidenav-link span {
+    opacity: 0;
+}
+
+
+
+/* LOGO */
+/*-----------------------------------------------*/
+.logo-container{
+    padding:0 10px;
+}
+
+.brand {
+    flex: none;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: var(--topbar-h);
+    margin: 0 -10px 10px;
+    padding: 0 25px;
+    background-color:var(--topbar);
+}
+
+.brand-logo {
+    display: block;
+    flex: none;
+    height: 24px;
+    width: auto;
+}
+
+
+
+/* NAV */
+/*-----------------------------------------------*/
+.sidenav-container {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.sidenav {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.sidenav-toggle {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+    padding: 10px 10px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 13px;
+    white-space: nowrap;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sidenav-toggle:hover {
+    background: #3A3A44;
+    color: var(--text);
+}
+
+.sidenav-toggle svg {
+    width: 24px;
+    height: 24px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.18s ease;
+}
+
+.sidenav ::deep .sidenav-link {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.sidenav ::deep .sidenav-link svg {
+    width: 24px;
+    height: 24px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.sidenav-toggle span,
+.usertext,
+.sidenav ::deep .sidenav-link span {
+    transition: opacity 0.12s ease;
+}
+
+.sidenav ::deep .sidenav-link:hover {
+    background: #3A3A44;
+    color: var(--text);
+}
+
+.sidenav ::deep .sidenav-link.active {
+    background: #3A3A44;
+    color: var(--text);
+}
+
+.sidenav ::deep .sidenav-link.active svg {
+    stroke: url(#nav-gradient);
+}
+
+
+
+/* Logout container */
+/*-----------------------------------------------*/
+.logout-container {
+    padding: 0 10px;
+}
+
+.logout-container > nav{
+    border-top:1px solid #23202d;
+    padding:20px 0;
+}
+
+/* Sidebar footer */
+/*-----------------------------------------------*/
+.sidebar-footer{
+    padding: 4px 10px;
+    background-color:var(--topbar);
+}
+
+.sideuser {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 4px 8px 7px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    position: relative;
+}
+
+
+.sideuser:hover {
+    background: #3A3A44;
+}
+
+.sideuser .dot {
+    position: absolute;
+    left: 31px;
+    top: 31px;
+    box-shadow: 0 0 0 2px var(--bar);
+}
+
+.useravatar {
+    display: block;
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+   
+}
+
+.dot.ok {
+    background: #3DDBA0;
+}
+.useravatar svg {
+    display: block;
+    width: 34px;
+    height: 34px;
+}
+
+.usertext {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.username {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.useremail {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #9A9AA5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
